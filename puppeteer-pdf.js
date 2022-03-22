@@ -103,8 +103,10 @@ cli
     }
   });
 
+  let browser = null;
+
   try {
-    const browser = await puppeteer.launch({ args: ["--no-sandbox", "--no-zygote"] });
+    browser = await puppeteer.launch({ args: ["--no-sandbox", "--no-zygote"] });
     const page = await browser.newPage();
 
     // Get URL / file path from first argument
