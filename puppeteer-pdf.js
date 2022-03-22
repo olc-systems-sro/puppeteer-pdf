@@ -103,19 +103,23 @@ cli
     }
   });
 
-  const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-  const page = await browser.newPage();
+  try {
+    const browser = await puppeteer.launch({ args: ["--no-sandbox", "--no-zygote"] });
+    const page = await browser.newPage();
 
-  // Get URL / file path from first argument
-  const location = _.first(cli.args);
-  await page.goto(isUrl(location) ? location : fileUrl(location), {
-    waitUntil: _.get(options, "waitUntil", "networkidle2")
-  });
-  // Output options if in debug mode
-  if (cli.debug) {
-    console.log(options);
+    // Get URL / file path from first argument
+    const location = _.first(cli.args);
+    await page.goto(isUrl(location) ? location : fileUrl(location), {
+      waitUntil: _.get(options, "waitUntil", "networkidle2")
+    });
+    // Output options if in debug mode
+    if (cli.debug) {
+      console.log(options);
+    }
+    await page.pdf(options);
+  } finally {
+    if (browser !== null) {
+      await browser.close();
+    }
   }
-  await page.pdf(options);
-
-  await browser.close();
 })();
